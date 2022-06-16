@@ -38,8 +38,6 @@ def drink_list():
         'drinks': [d.short() for d in drinks]
     }), 200
 
-
-
 @app.route('/drinks-detail', methods=['GET'])
 @requires_auth('get:drinks-detail')
 def drink_list_detail(payload):
@@ -58,8 +56,6 @@ def drink_list_detail(payload):
         'drinks': [d.long() for d in drinks]
     }), 200
 
-
-
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def drink_create(payload):
@@ -73,14 +69,14 @@ def drink_create(payload):
             or appropriate status code indicating reason for failure
     '''
     # Get the body
-    req = request.get_json()
+    body = request.get_json()
     try:
-        # create new Drink
-        drink = Drink()
-        drink.title = req['title']
-        # convert recipe to String
-        drink.recipe = json.dumps(req['recipe'])
-        # insert the new Drink
+        # Prepare Drink for DB
+        drink = Drink(
+            title=body.get("title"),
+            recipe=json.dumps(body.get("recipe"))
+        )
+        # Commit to DB
         drink.insert()
 
     except Exception:
@@ -88,65 +84,125 @@ def drink_create(payload):
 
     return jsonify({'success': True, 'drinks': [drink.long()]})
 
+@app.route('/drinks/<int:id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
+def drink_update(payload, id):
+    '''
+    @TODO implement endpoint
+        PATCH /drinks/<id>
+            where <id> is the existing model id
+            it should respond with a 404 error if <id> is not found
+            it should update the corresponding row for <id>
+            it should require the 'patch:drinks' permission
+            it should contain the drink.long() data representation
+        returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
+            or appropriate status code indicating reason for failure
+    '''
+    # Get the body
+    body = request.get_json()
 
-'''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-        or appropriate status code indicating reason for failure
-'''
+    # Get the Drink with requested Id
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
 
+    # abort, drink not found
+    if not drink:
+        abort(404)
 
-'''
-@TODO implement endpoint
-    DELETE /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should delete the corresponding row for <id>
-        it should require the 'delete:drinks' permission
-    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
-        or appropriate status code indicating reason for failure
-'''
+    try:
 
+        title = body.get('title')
+        recipe = body.get('recipe')
+
+        # check if we should update title
+        if title:
+            drink.title = title
+
+        # check if we should update recipe
+        if recipe:
+            drink.recipe = json.dumps(body.get("recipe"))
+
+        # update the drink
+        drink.update()
+    except Exception:
+        abort(400)
+
+    return jsonify({'success': True, 'drinks': [drink.long()]}), 200
+
+@app.route('/drinks/<int:id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
+def drink_delete(payload, id):
+    '''
+    @TODO implement endpoint
+        DELETE /drinks/<id>
+            where <id> is the existing model id
+            it should respond with a 404 error if <id> is not found
+            it should delete the corresponding row for <id>
+            it should require the 'delete:drinks' permission
+        returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+            or appropriate status code indicating reason for failure
+    '''
+    # Get the Drink with requested Id
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
+
+    # abort when drink not found
+    if not drink:
+        abort(404)
+
+    try:
+        # delete the drink
+        drink.delete()
+    except Exception:
+        abort(400)
+
+    return jsonify({'success': True, 'delete': id}), 200
 
 # Error Handling
-'''
-Example error handling for unprocessable entity
-'''
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({"success": False, "error": 404, "message": "Not Found!!!"}), 404
 
+@app.errorhandler(406)
+def not_found_error(error):
+    return (
+        jsonify({"success": False, "error": 406,
+                "message": "Not Acceptable!!!"}),
+        406,
+    )
 
 @app.errorhandler(422)
-def unprocessable(error):
+def unprocessable_error(error):
+    return (
+        jsonify(
+            {"success": False, "error": 422,
+                "message": "Request Unprocessable!!!"}
+        ),
+        422,
+    )
+
+@app.errorhandler(400)
+def bad_request_error(error):
+    return (
+        jsonify({"success": False, "error": 400,
+                "message": "Bad request!!!"}),
+        400,
+    )
+
+@app.errorhandler(500)
+def server_error(error):
+    return (
+        jsonify({"success": False, "error": 500,
+                "message": "Server Error!!!"}),
+        500,
+    )
+
+@app.errorhandler(AuthError)
+def auth_error(error):
+    '''
+    @DONE implement error handler for AuthError
+        error handler should conform to general task above
+    '''
     return jsonify({
         "success": False,
-        "error": 422,
-        "message": "unprocessable"
-    }), 422
-
-
-'''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
-    each error handler should return (with approprate messages):
-             jsonify({
-                    "success": False,
-                    "error": 404,
-                    "message": "resource not found"
-                    }), 404
-
-'''
-
-'''
-@TODO implement error handler for 404
-    error handler should conform to general task above
-'''
-
-
-'''
-@TODO implement error handler for AuthError
-    error handler should conform to general task above
-'''
+        "error": error.status_code,
+        "message": error.error.get("description")
+    }), error.status_code
