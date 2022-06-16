@@ -26,7 +26,7 @@ CORS(app)
 def drink_list():
     # Get all the drinks from db
     """
-        @TODO implement endpoint
+        @DONE implement endpoint
             GET /drinks
                 it should be a public endpoint
                 it should contain only the drink.short() data representation
@@ -41,7 +41,7 @@ def drink_list():
 @requires_auth("get:drinks-detail")
 def drink_list_detail(payload):
     """
-    @TODO implement endpoint
+    @DONE implement endpoint
         GET /drinks-detail
             it should require the 'get:drinks-detail' permission
             it should contain the drink.long() data representation
@@ -57,7 +57,7 @@ def drink_list_detail(payload):
 @requires_auth("post:drinks")
 def drink_create(payload):
     """
-    @TODO implement endpoint
+    @DONE implement endpoint
         POST /drinks
             it should create a new row in the drinks table
             it should require the 'post:drinks' permission
@@ -83,7 +83,7 @@ def drink_create(payload):
 @requires_auth("patch:drinks")
 def drink_update(payload, id):
     """
-    @TODO implement endpoint
+    @DONE implement endpoint
         PATCH /drinks/<id>
             where <id> is the existing model id
             it should respond with a 404 error if <id> is not found
@@ -96,7 +96,7 @@ def drink_update(payload, id):
     # Get the body
     body = request.get_json()
 
-    # Get the Drink with requested Id
+    # filter Drink with requested Id
     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
     # abort, drink not found
@@ -137,7 +137,7 @@ def drink_delete(payload, id):
         returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     """
-    # Get the Drink with requested Id
+    # filter Drink with requested Id
     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
     # abort when drink not found

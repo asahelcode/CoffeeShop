@@ -85,3 +85,172 @@ There are `@TODO` comments throughout the `./backend/src`. We recommend tackling
 
 1. `./src/auth/auth.py`
 2. `./src/api.py`
+
+
+## Endpoint Documentation
+
+### GET `/drinks`
+- Request arguments: None.
+- Response:  An object with these keys:
+  - `drinks`: Contains a object of `id` and `recipe:list of key value pairs`.
+
+```json
+{
+  "drinks": [
+    {
+      "id": 1,
+      "recipe": [
+        {
+          "color": "blue",
+          "parts": 1
+        }
+      ],
+      "title": "water"
+    },
+    {
+      "id": 2,
+      "recipe": [
+        {
+          "color": "yellow",
+          "parts": 1
+        }
+      ],
+      "title": "Tuwo"
+    },
+    {
+      "id": 3,
+      "recipe": [
+        {
+          "color": "brown",
+          "parts": 1
+        }
+      ],
+      "title": "Miya"
+    },
+    {
+      "id": 4,
+      "recipe": [
+        {
+          "color": "ash",
+          "parts": 1
+        }
+      ],
+      "title": "Cola"
+    }
+  ],
+  "success": true
+}
+```
+
+
+### GET `/drinks-detail`
+- Require Authentication.
+- Response:  An object with these keys:
+  - `drinks`: Contains a object of `id` and `recipe:list of key value pairs`.
+
+```json
+{
+  "drinks": [
+    {
+      "id": 1,
+      "recipe": [
+        {
+          "color": "blue",
+          "name": "water",
+          "parts": 1
+        }
+      ],
+      "title": "water"
+    },
+    {
+      "id": 2,
+      "recipe": [
+        {
+          "color": "blue",
+          "parts": 1
+        }
+      ],
+      "title": "Tuwo"
+    }
+  ],
+  "success": true
+}
+```
+
+### POST `/drinks`
+- Require Authentication.
+- Request Body:
+  - `title` (char) - The Title
+  - `recipe` (list) - list containing objects of recipe
+- Request Body SAMPLE:
+```json
+{
+	"title": "Cola",
+	"recipe": [
+		{
+			"color": "ash",
+			"parts": 1
+		}
+	]
+}
+```
+- Response:  An object with these keys:
+  - `drinks`: Contains a object of `id` and `recipe:list of key value pairs`.
+```json
+{
+  "drinks": [
+    {
+      "id": 4,
+      "recipe": [
+        {
+          "color": "ash",
+          "parts": 1
+        }
+      ],
+      "title": "Cola"
+    }
+  ],
+  "success": true
+}
+```
+
+### PATCH `/drinks/<int:id>`
+- Require Authentication.
+- Request Argument:
+   - `id` (int) ID of the Intended drink to update
+- Request Body:
+  - Object with key value pair of what to update
+- Response:
+  - Returns the updated instance and success flag
+
+```json
+{
+  "drinks": [
+    {
+      "id": 2,
+      "recipe": [
+        {
+          "color": "yellow",
+          "parts": 1
+        }
+      ],
+      "title": "Sabon title"
+    }
+  ],
+  "success": true
+}
+```
+
+
+### DELETE `/drinks/<int:id>`
+- Require Authentication.
+- Request Argument:
+   - `id` (int) ID of the Intended drink to update
+- Response:
+  - Returns the delete instance id and success flag
+```json
+{
+  "delete": 4,
+  "success": true
+}
+```
