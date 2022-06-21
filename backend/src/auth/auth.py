@@ -12,14 +12,7 @@ AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 ALGORITHMS = [os.getenv("ALGORITHMS")]
 API_AUDIENCE = os.getenv("API_AUDIENCE")
 
-# AUTH0_DOMAIN = "dabolinux.us.auth0.com"
-# ALGORITHMS = ["RS256"]
-# API_AUDIENCE = "CoffeeShopNew"
-# API_AUDIENCE = 'http://localhost:5000'
-
 ## AuthError Exception
-
-
 class AuthError(Exception):
     """
         AuthError Exception
