@@ -30,7 +30,8 @@ def drink_list():
             GET /drinks
                 it should be a public endpoint
                 it should contain only the drink.short() data representation
-            returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+            returns status code 200 and json
+             {"success": True, "drinks": drinks} where drinks is the list of drinks
                 or appropriate status code indicating reason for failure
     """
     drinks = Drink.query.all()
@@ -45,7 +46,8 @@ def drink_list_detail(payload):
         GET /drinks-detail
             it should require the 'get:drinks-detail' permission
             it should contain the drink.long() data representation
-        returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+        returns status code 200 and json 
+        {"success": True, "drinks": drinks} where drinks is the list of drinks
             or appropriate status code indicating reason for failure
     """
     # Get all the drinks from db
@@ -62,7 +64,9 @@ def drink_create(payload):
             it should create a new row in the drinks table
             it should require the 'post:drinks' permission
             it should contain the drink.long() data representation
-        returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
+        returns status code 200 and json 
+        {"success": True, "drinks": drink} where drink an array 
+        containing only the newly created drink
             or appropriate status code indicating reason for failure
     """
     # Get the body
@@ -90,8 +94,10 @@ def drink_update(payload, id):
             it should update the corresponding row for <id>
             it should require the 'patch:drinks' permission
             it should contain the drink.long() data representation
-        returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-            or appropriate status code indicating reason for failure
+        returns status code 200 and json 
+        {"success": True, "drinks": drink} where drink an array 
+        containing only the updated drink
+        or appropriate status code indicating reason for failure
     """
     # Get the body
     body = request.get_json()
@@ -104,10 +110,8 @@ def drink_update(payload, id):
         abort(404)
 
     try:
-
         title = body.get("title")
         recipe = body.get("recipe")
-
         # check if we should update title
         if title:
             drink.title = title
@@ -134,16 +138,15 @@ def drink_delete(payload, id):
             it should respond with a 404 error if <id> is not found
             it should delete the corresponding row for <id>
             it should require the 'delete:drinks' permission
-        returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+        returns status code 200 and json 
+        {"success": True, "delete": id} where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     """
     # filter Drink with requested Id
     drink = Drink.query.filter(Drink.id == id).one_or_none()
-
     # abort when drink not found
     if not drink:
         abort(404)
-
     try:
         # delete the drink
         drink.delete()
