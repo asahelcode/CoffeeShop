@@ -51,7 +51,7 @@ The `--reload` flag will detect file changes and restart the server automaticall
 
 ## Using .env File for Environmental Variables
 
-1. Create an empty file named .env in ./backend/src/.env
+1. Create an empty file named `.env` in `./backend/src/.env`
 2. Edit the .env file and add your Variables:
     - AUTH0_DOMAIN
     - ALGORITHMS
