@@ -5,6 +5,7 @@ from jose import jwt
 from urllib.request import urlopen
 from dotenv import load_dotenv
 import os
+
 # load environmental variables from .env
 load_dotenv()
 
