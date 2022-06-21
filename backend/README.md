@@ -48,6 +48,25 @@ flask run --reload
 
 The `--reload` flag will detect file changes and restart the server automatically.
 
+
+## Using .env File for Environmental Variables
+
+1. Create an empty file named .env in ./backend/src/.env
+2. Edit the .env file and add your Variables:
+    - AUTH0_DOMAIN
+    - ALGORITHMS
+    - API_AUDIENCE
+    e.g
+    ```bash
+        FLASK_APP="flaskr"
+        FLASK_ENV="development"
+        AUTH0_DOMAIN="<YOUR_AUTH0_DOMAIN>"
+        ALGORITHMS="<YOUR_AUTH0_ALGORITHMS> e.g RS256"
+        API_AUDIENCE="<AUTH0_AUDIENCE>"
+    ```
+3. Go to [Flask Auth0 Documentation](https://auth0.com/docs/quickstart/backend/python/01-authorization)
+
+
 ## Tasks
 
 ### Setup Auth0
