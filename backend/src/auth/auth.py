@@ -39,7 +39,9 @@ def get_token_auth_header():
             it should raise an AuthError if the header is malformed
         return the token part of the header
     """
-    auth = request.headers.get("Authorization", None)
+    
+    
+    auth = request.headers['Authorization']
     if not auth:
         raise AuthError(
             {
@@ -49,7 +51,7 @@ def get_token_auth_header():
             401,
         )
 
-    parts = auth.split()
+    parts = auth.split('')
     if parts[0].lower() != "bearer":
         raise AuthError(
             {
@@ -196,7 +198,12 @@ def requires_auth(permission=""):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
+            try:
+                payload = verify_decode_jwt(token)
+            except:
+                raise AuthError({
+                    'code': 'Empty payload',
+                    'description': 'Payload could not be generated'}, 400)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
 
