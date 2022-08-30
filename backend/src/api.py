@@ -23,7 +23,8 @@ CORS(app)
 
 
 @app.route("/drinks", methods=["GET"])
-def drink_list():
+@requires_auth('get:drinks')
+def drink_list(payload):
     # Get all the drinks from db
     """
         @DONE implement endpoint
@@ -80,12 +81,12 @@ def drink_create(payload):
     except Exception:
         abort(400)
 
-    return jsonify({"success": True, "drinks": [drink.long()]})
+    return jsonify({"success": True, "drinks": [drink.long()]}), 200
 
 
-@app.route("/drinks/<int:id>", methods=["PATCH"])
+@app.route("/drinks/<int:drink_id>", methods=["PATCH"])
 @requires_auth("patch:drinks")
-def drink_update(payload, id):
+def drink_update(payload, drink_id):
     """
     @DONE implement endpoint
         PATCH /drinks/<id>
@@ -103,7 +104,7 @@ def drink_update(payload, id):
     body = request.get_json()
 
     # filter Drink with requested Id
-    drink = Drink.query.filter(Drink.id == id).one_or_none()
+    drink = Drink.query.get(drink_id)
 
     # abort, drink not found
     if not drink:
@@ -128,9 +129,9 @@ def drink_update(payload, id):
     return jsonify({"success": True, "drinks": [drink.long()]}), 200
 
 
-@app.route("/drinks/<int:id>", methods=["DELETE"])
+@app.route("/drinks/<int:drink_id>", methods=["DELETE"])
 @requires_auth("delete:drinks")
-def drink_delete(payload, id):
+def drink_delete(payload, drink_id):
     """
     @TODO implement endpoint
         DELETE /drinks/<id>
@@ -143,7 +144,7 @@ def drink_delete(payload, id):
             or appropriate status code indicating reason for failure
     """
     # filter Drink with requested Id
-    drink = Drink.query.filter(Drink.id == id).one_or_none()
+    drink = Drink.query.get(drink_id)
     # abort when drink not found
     if not drink:
         abort(404)
